@@ -100,7 +100,7 @@ object KafkaManager {
       BrokerViewThreadPoolSize -> Runtime.getRuntime.availableProcessors().toString,
       BrokerViewMaxQueueSize -> "1000",
       OffsetCacheThreadPoolSize -> Runtime.getRuntime.availableProcessors().toString,
-      OffsetCacheMaxQueueSize -> "1000",
+      OffsetCacheMaxQueueSize -> "10000",
       KafkaAdminClientThreadPoolSize -> Runtime.getRuntime.availableProcessors().toString,
       KafkaAdminClientMaxQueueSize -> "1000"
     )

@@ -143,7 +143,7 @@ class KafkaAdminClient(context: => ActorContext, adminClientActorPath: ActorPath
 
 
 object KafkaManagedOffsetCache {
-  val supportedVersions: Set[KafkaVersion] = Set(Kafka_0_8_2_0, Kafka_0_8_2_1, Kafka_0_8_2_2, Kafka_0_9_0_0, Kafka_0_9_0_1, Kafka_0_10_0_0, Kafka_0_10_0_1)
+  val supportedVersions: Set[KafkaVersion] = Set(Kafka_0_8_2_0, Kafka_0_8_2_1, Kafka_0_8_2_2, Kafka_0_9_0_0, Kafka_0_9_0_1, Kafka_0_10_0_0, Kafka_0_10_0_1, Kafka_0_10_1_0)
   val ConsumerOffsetTopic = "__consumer_offsets"
 
   def isSupported(version: KafkaVersion) : Boolean = {
@@ -328,7 +328,7 @@ case class KafkaManagedOffsetCache(clusterContext: ClusterContext
 case class ConsumerInstanceSubscriptions private(id: String, subs: Map[String, Int])
 
 object ConsumerInstanceSubscriptions extends Logging {
-  
+
   //{"version":1,"subscription":{"DXSPreAgg":1},"pattern":"static","timestamp":"1443578242654"}
   def apply(consumer: String, id: String, jsonString: String) : ConsumerInstanceSubscriptions = {
     import org.json4s.jackson.JsonMethods.parse
@@ -349,15 +349,15 @@ trait OffsetCache extends Logging {
   def clusterContext: ClusterContext
 
   def getKafkaVersion: KafkaVersion
-  
+
   def getCacheTimeoutSecs: Int
 
   def getSimpleConsumerSocketTimeoutMillis: Int
 
   protected[this] implicit def ec: ExecutionContext
-  
+
   protected[this] implicit def cf: ClusterFeatures
-  
+
   protected[this] val loadOffsets: Boolean
 
   // Caches a map of partitions to offsets at a key that is the topic's name.
@@ -415,7 +415,7 @@ trait OffsetCache extends Logging {
           }
           val result: Future[Map[Int, Option[Long]]] = Future.sequence(listOfFutures).map(_.foldRight(Map.empty[Int, Option[Long]])((b, a) => b ++ a))
           result.map(m => PartitionOffsetsCapture(System.currentTimeMillis(), m.mapValues(_.getOrElse(0L))))
-        } 
+        }
         catch {
           case e: Exception =>
             error(s"Failed to get offsets for topic $topic", e)
@@ -431,7 +431,7 @@ trait OffsetCache extends Logging {
   }
 
   private[this] def emptyPartitionOffsetsCapture: Future[PartitionOffsetsCapture] = Future.successful(PartitionOffsetsCapture(System.currentTimeMillis(), Map()))
-  
+
   protected def getTopicPartitionLeaders(topic: String) : Option[List[(Int, Option[BrokerIdentity])]]
 
   protected def getTopicDescription(topic: String, interactive: Boolean) : Option[TopicDescription]
@@ -439,7 +439,7 @@ trait OffsetCache extends Logging {
   protected def getBrokerList : BrokerList
 
   protected def readConsumerOffsetByTopicPartition(consumer: String, topic: String, tpi: Map[Int, TopicPartitionIdentity]) : Map[Int, Long]
-  
+
   protected def readConsumerOwnerByTopicPartition(consumer: String, topic: String, tpi: Map[Int, TopicPartitionIdentity]) : Map[Int, String]
 
   protected def getConsumerTopicsFromIds(consumer: String) : Set[String]
@@ -475,7 +475,7 @@ trait OffsetCache extends Logging {
       }
     }
   }
-  
+
   def stop() : Unit = {
     kafkaManagedOffsetCache.foreach { of =>
       info("Stopping kafka managed offset cache ...")
@@ -551,7 +551,7 @@ trait OffsetCache extends Logging {
         }.toMap
     ConsumerDescription(consumer, topicDescriptions, consumerType)
   }
-  
+
   final def getConsumedTopicDescription(consumer:String
                                         , topic:String
                                         , interactive: Boolean
@@ -593,7 +593,7 @@ trait OffsetCache extends Logging {
       partitionOffsets.map(_.size).getOrElse(0))
     ConsumedTopicDescription(consumer, topic, numPartitions, optTopic, partitionOwners, partitionOffsets)
   }
-  
+
   final def getConsumerList: ConsumerList = {
     ConsumerList(getKafkaManagedConsumerList ++ getZKManagedConsumerList, clusterContext)
   }
@@ -631,9 +631,9 @@ case class OffsetCacheActive(curator: CuratorFramework
       }
     }
   }
-  
+
   private[this] val consumersTreeCache = new TreeCache(curator, ZkUtils.ConsumersPath)
-  
+
   @volatile
   private[this] var consumersTreeCacheLastUpdateMillis : Long = System.currentTimeMillis()
 
@@ -644,7 +644,7 @@ case class OffsetCacheActive(curator: CuratorFramework
   protected def getTopicPartitionLeaders(topic: String) : Option[List[(Int, Option[BrokerIdentity])]] = partitionLeaders(topic)
 
   protected def getTopicDescription(topic: String, interactive: Boolean) : Option[TopicDescription] = topicDescriptions(topic, interactive)
-  
+
   override def start():  Unit = {
     super.start()
     info("Starting consumers tree cache...")
@@ -653,12 +653,12 @@ case class OffsetCacheActive(curator: CuratorFramework
     info("Adding consumers tree cache listener...")
     consumersTreeCache.getListenable.addListener(consumersTreeCacheListener)
   }
-  
+
   override def stop(): Unit = {
     super.stop()
     info("Removing consumers tree cache listener...")
     Try(consumersTreeCache.getListenable.removeListener(consumersTreeCacheListener))
-    
+
     info("Shutting down consumers tree cache...")
     Try(consumersTreeCache.close())
   }
@@ -671,9 +671,9 @@ case class OffsetCacheActive(curator: CuratorFramework
         val offsetPath = "%s/%s/%s/%s/%s".format(ZkUtils.ConsumersPath, consumer, "offsets", topic, p)
         (p, Option(consumersTreeCache.getCurrentData(offsetPath)).flatMap(cd => Option(cd.getData)).map(asString).getOrElse("-1").toLong)
     }
-    
+
   }
-  
+
   protected def readConsumerOwnerByTopicPartition(consumer: String, topic: String, tpi: Map[Int, TopicPartitionIdentity]) : Map[Int, String] = {
     tpi.map {
       case (p, _) =>
@@ -947,7 +947,7 @@ class KafkaStateActor(config: KafkaStateActorConfig) extends BaseClusterQueryCom
       }
     }
   }
-  
+
   private[this] lazy val offsetCache: OffsetCache = {
     if(config.clusterContext.config.activeOffsetCacheEnabled)
       new OffsetCacheActive(config.curator
@@ -1117,7 +1117,7 @@ class KafkaStateActor(config: KafkaStateActorConfig) extends BaseClusterQueryCom
   override def processQueryRequest(request: QueryRequest): Unit = {
     request match {
       case KSGetTopics =>
-        val deleteSet: Set[String] = 
+        val deleteSet: Set[String] =
           featureGateFold(KMDeleteTopicFeature)(
           Set.empty,
           {
@@ -1271,4 +1271,3 @@ class KafkaStateActor(config: KafkaStateActorConfig) extends BaseClusterQueryCom
   }
 
 }
-

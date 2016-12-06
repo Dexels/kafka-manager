@@ -134,7 +134,7 @@ class Cluster (val messagesApi: MessagesApi, val kafkaManagerContext: KafkaManag
           , "brokerViewThreadPoolSize" -> optional(number(2, 1000))
           , "brokerViewThreadPoolQueueSize" -> optional(number(10, 1000))
           , "offsetCacheThreadPoolSize" -> optional(number(2, 1000))
-          , "offsetCacheThreadPoolQueueSize" -> optional(number(10, 1000))
+          , "offsetCacheThreadPoolQueueSize" -> optional(number(10, 10000))
           , "kafkaAdminClientThreadPoolSize" -> optional(number(2, 1000))
           , "kafkaAdminClientThreadPoolQueueSize" -> optional(number(10, 1000))
         )(ClusterTuning.apply)(ClusterTuning.unapply)
