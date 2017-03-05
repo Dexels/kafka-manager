@@ -74,6 +74,19 @@ object GroupMetadataManager {
   private val MEMBER_METADATA_SUBSCRIPTION_V0 = MEMBER_METADATA_V0.get("subscription")
   private val MEMBER_METADATA_ASSIGNMENT_V0 = MEMBER_METADATA_V0.get("assignment")
 
+  private val MEMBER_METADATA_V1 = new Schema(new Field("member_id", STRING),
+    new Field("client_id", STRING),
+    new Field("client_host", STRING),
+    new Field("rebalance_timeout", INT32),
+    new Field("session_timeout", INT32),
+    new Field("subscription", BYTES),
+    new Field("assignment", BYTES))
+  private val MEMBER_METADATA_MEMBER_ID_V1 = MEMBER_METADATA_V1.get("member_id")
+  private val MEMBER_METADATA_CLIENT_ID_V1= MEMBER_METADATA_V1.get("client_id")
+  private val MEMBER_METADATA_CLIENT_HOST_V1 = MEMBER_METADATA_V1.get("client_host")
+  private val MEMBER_METADATA_SESSION_TIMEOUT_V1 = MEMBER_METADATA_V1.get("session_timeout")
+  private val MEMBER_METADATA_SUBSCRIPTION_V1 = MEMBER_METADATA_V1.get("subscription")
+  private val MEMBER_METADATA_ASSIGNMENT_V1 = MEMBER_METADATA_V1.get("assignment")
 
   private val GROUP_METADATA_VALUE_SCHEMA_V0 = new Schema(new Field("protocol_type", STRING),
     new Field("generation", INT32),
@@ -85,6 +98,17 @@ object GroupMetadataManager {
   private val GROUP_METADATA_PROTOCOL_V0 = GROUP_METADATA_VALUE_SCHEMA_V0.get("protocol")
   private val GROUP_METADATA_LEADER_V0 = GROUP_METADATA_VALUE_SCHEMA_V0.get("leader")
   private val GROUP_METADATA_MEMBERS_V0 = GROUP_METADATA_VALUE_SCHEMA_V0.get("members")
+
+  private val GROUP_METADATA_VALUE_SCHEMA_V1 = new Schema(new Field("protocol_type", STRING),
+    new Field("generation", INT32),
+    new Field("protocol", STRING),
+    new Field("leader", STRING),
+    new Field("members", new ArrayOf(MEMBER_METADATA_V1)))
+  private val GROUP_METADATA_PROTOCOL_TYPE_V1 = GROUP_METADATA_VALUE_SCHEMA_V1.get("protocol_type")
+  private val GROUP_METADATA_GENERATION_V1 = GROUP_METADATA_VALUE_SCHEMA_V1.get("generation")
+  private val GROUP_METADATA_PROTOCOL_V1 = GROUP_METADATA_VALUE_SCHEMA_V1.get("protocol")
+  private val GROUP_METADATA_LEADER_V1 = GROUP_METADATA_VALUE_SCHEMA_V1.get("leader")
+  private val GROUP_METADATA_MEMBERS_V1 = GROUP_METADATA_VALUE_SCHEMA_V1.get("members")
 
   // map of versions to key schemas as data types
   private val MESSAGE_TYPE_SCHEMAS = Map(
@@ -99,8 +123,8 @@ object GroupMetadataManager {
   private val CURRENT_OFFSET_VALUE_SCHEMA_VERSION = 1.toShort
 
   // map of version of group metadata value schemas
-  private val GROUP_VALUE_SCHEMAS = Map(0 -> GROUP_METADATA_VALUE_SCHEMA_V0)
-  private val CURRENT_GROUP_VALUE_SCHEMA_VERSION = 0.toShort
+  private val GROUP_VALUE_SCHEMAS = Map(0 -> GROUP_METADATA_VALUE_SCHEMA_V0, 1-> GROUP_METADATA_VALUE_SCHEMA_V1)
+  private val CURRENT_GROUP_VALUE_SCHEMA_VERSION = 1.toShort
 
   private val CURRENT_OFFSET_KEY_SCHEMA = schemaForKey(CURRENT_OFFSET_KEY_SCHEMA_VERSION)
   private val CURRENT_GROUP_KEY_SCHEMA = schemaForKey(CURRENT_GROUP_KEY_SCHEMA_VERSION)
