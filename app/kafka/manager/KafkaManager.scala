@@ -91,18 +91,18 @@ object KafkaManager {
       DeletionBatchSize -> "2",
       MaxQueueSize -> "100",
       ThreadPoolSize -> "2",
-      MutexTimeoutMillis -> "4000",
+      MutexTimeoutMillis -> "4500",
       StartDelayMillis -> "1000",
-      ApiTimeoutMillis -> "5000",
-      ClusterActorsAskTimeoutMillis -> "2000",
-      PartitionOffsetCacheTimeoutSecs -> "5",
-      SimpleConsumerSocketTimeoutMillis -> "10000",
+      ApiTimeoutMillis -> "21000",
+      ClusterActorsAskTimeoutMillis -> "20000",
+      PartitionOffsetCacheTimeoutSecs -> "12",
+      SimpleConsumerSocketTimeoutMillis -> "20001",
       BrokerViewThreadPoolSize -> Runtime.getRuntime.availableProcessors().toString,
-      BrokerViewMaxQueueSize -> "1000",
+      BrokerViewMaxQueueSize -> "2500",
       OffsetCacheThreadPoolSize -> Runtime.getRuntime.availableProcessors().toString,
-      OffsetCacheMaxQueueSize -> "1000",
+      OffsetCacheMaxQueueSize -> "2600",
       KafkaAdminClientThreadPoolSize -> Runtime.getRuntime.availableProcessors().toString,
-      KafkaAdminClientMaxQueueSize -> "1000"
+      KafkaAdminClientMaxQueueSize -> "2700"
     )
     import scala.collection.JavaConverters._
     ConfigFactory.parseMap(defaults.asJava)

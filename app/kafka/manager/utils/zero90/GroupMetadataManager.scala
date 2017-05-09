@@ -85,13 +85,6 @@ object GroupMetadataManager {
   private val MEMBER_METADATA_SUBSCRIPTION_V0 = MEMBER_METADATA_V0.get("subscription")
   private val MEMBER_METADATA_ASSIGNMENT_V0 = MEMBER_METADATA_V0.get("assignment")
 
-  private val MEMBER_METADATA_V1 = new Schema(new Field("member_id", STRING),
-    new Field("client_id", STRING),
-    new Field("client_host", STRING),
-    new Field("rebalance_timeout", INT32),
-    new Field("session_timeout", INT32),
-    new Field("subscription", BYTES),
-    new Field("assignment", BYTES))
   private val MEMBER_METADATA_MEMBER_ID_V1 = MEMBER_METADATA_V1.get("member_id")
   private val MEMBER_METADATA_CLIENT_ID_V1= MEMBER_METADATA_V1.get("client_id")
   private val MEMBER_METADATA_CLIENT_HOST_V1 = MEMBER_METADATA_V1.get("client_host")
@@ -105,13 +98,6 @@ object GroupMetadataManager {
     new Field("protocol", STRING),
     new Field("leader", STRING),
     new Field("members", new ArrayOf(MEMBER_METADATA_V0)))
-
-  private val GROUP_METADATA_VALUE_SCHEMA_V1 = new Schema(
-      new Field("protocol_type", STRING),
-      new Field("generation", INT32),
-      new Field("protocol", NULLABLE_STRING),
-      new Field("leader", NULLABLE_STRING),
-      new Field("members", new ArrayOf(MEMBER_METADATA_V1)))
 
   private val GROUP_METADATA_PROTOCOL_TYPE_V0 = GROUP_METADATA_VALUE_SCHEMA_V0.get("protocol_type")
   private val GROUP_METADATA_GENERATION_V0 = GROUP_METADATA_VALUE_SCHEMA_V0.get("generation")

@@ -50,7 +50,7 @@ case class KafkaManagerActorConfig(curatorConfig: CuratorConfig
                                    , kafkaManagerUpdatePeriod: FiniteDuration = 10 seconds
                                    , deleteClusterUpdatePeriod: FiniteDuration = 10 seconds
                                    , deletionBatchSize : Int = 2
-                                   , clusterActorsAskTimeoutMillis: Int = 2000
+                                   , clusterActorsAskTimeoutMillis: Int = 10000
                                    , simpleConsumerSocketTimeoutMillis : Int = 10000
                                    , defaultTuning: ClusterTuning
                                    , consumerProperties: Option[Properties]
@@ -63,7 +63,7 @@ class KafkaManagerActor(kafkaManagerConfig: KafkaManagerActorConfig)
 
   //this is for curator aware actor
   override def curatorConfig: CuratorConfig = kafkaManagerConfig.curatorConfig
-  
+
   private[this] val baseClusterZkPath = zkPath("clusters")
   private[this] val configsZkPath = zkPath("configs")
   private[this] val deleteClustersZkPath = zkPath("deleteClusters")
@@ -217,7 +217,7 @@ class KafkaManagerActor(kafkaManagerConfig: KafkaManagerActorConfig)
     }
   }
 
-  
+
   override def processQueryRequest(request: QueryRequest): Unit = {
     request match {
       case KMGetActiveClusters =>
@@ -240,10 +240,10 @@ class KafkaManagerActor(kafkaManagerConfig: KafkaManagerActorConfig)
           clusterManagerPath:ActorPath =>
             context.actorSelection(clusterManagerPath).forward(request)
         }
-        
+
       case any: Any => log.warning("kma : processQueryRequest : Received unknown message: {}", any)
     }
-    
+
   }
 
   override def processCommandRequest(request: CommandRequest): Unit = {
